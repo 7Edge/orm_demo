@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 
 from django.shortcuts import render
 from django.views import View
@@ -7,6 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from .models import Category
 from app01 import models
@@ -53,3 +55,22 @@ class CategoryDetailView(APIView):
 class TeacherModelViewSets(ModelViewSet):
     queryset = models.Teachers.objects.all()
     serializer_class = edu_serializers.TeacherModelSerializer
+
+
+# 专题课程
+class CoursesView(APIView):
+    pass
+
+    # 创建课程
+    def post(self, request):
+        serializer_obj = edu_serializers.CourseModelSerializer(data=request.data)
+        if serializer_obj.is_valid():
+            print(type(serializer_obj.validated_data))
+            obj_info = dict(serializer_obj.validated_data)
+            many_to_many = obj_info.pop('teacher')
+            instance = models.Courses.objects.create(**obj_info)
+            instance.teacher.set(many_to_many)  # 创建多对多关系，清空关系再添加关系
+            return Response({'code': 1000,
+                             'data': serializer_obj.data})
+        return Response({'code': 1001,
+                         'errors': serializer_obj.errors})

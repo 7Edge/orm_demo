@@ -15,5 +15,13 @@ class TeacherModelSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+# 课程序列化
+class CourseModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.Courses
+        fields = '__all__'
+
+
 if __name__ == '__main__':
     pass

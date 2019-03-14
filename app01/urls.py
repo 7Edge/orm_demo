@@ -8,14 +8,15 @@ from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.routers import SimpleRouter
 
-from .views import CategoryView, TeacherModelViewSets, CategoryDetailView
+from .views import CategoryView, TeacherModelViewSets, CategoryDetailView, CoursesView
 
 router = SimpleRouter()
 router.register('teachers', TeacherModelViewSets)
 
 urlpatterns = [
     re_path('categories/$', csrf_exempt(CategoryView.as_view()), name='categories'),
-    re_path('categories/(?P<pk>\w+)/$', csrf_exempt(CategoryDetailView.as_view()), name='category-detail')
+    re_path('categories/(?P<pk>\w+)/$', csrf_exempt(CategoryDetailView.as_view()), name='category-detail'),
+    re_path('courses/$', csrf_exempt(CoursesView.as_view()), name='courses'),
 ]
 urlpatterns += router.urls
 
