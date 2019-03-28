@@ -6,7 +6,8 @@ from django.views import View
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ViewSet
+from rest_framework.decorators import action
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -74,3 +75,47 @@ class CoursesView(APIView):
                              'data': serializer_obj.data})
         return Response({'code': 1001,
                          'errors': serializer_obj.errors})
+
+
+# 专题课程详情
+class CourseDetailViewSet(ViewSet):
+    queryset = models.Courses.objects.all()
+    serializer_class = edu_serializers.PricePolicyModelSerializer
+
+    # @action(detail=True, )
+
+    def price_policies(self, request, pk):
+        result = {"code": 1000,
+                  "data": None,
+                  "error": ""}
+        try:
+            course_obj = self.queryset.get(pk=pk)
+            prices = course_obj.course_pricepolicy_objs.all()
+            serializer_obj = self.serializer_class(prices, many=True)
+            result['data'] = serializer_obj.data
+
+        except ObjectDoesNotExist:
+            result["error"] = "课程不存在！"
+            result['code'] = 10001
+
+        return Response(result)
+
+    def add_price_policy(self, request, pk):
+        result = {"code": 1000,
+                  "data": None,
+                  "error": ''}
+        try:
+            course_obj = self.queryset.get(pk=pk)
+            ser_obj = self.serializer_class(data=request.data, many=False)
+
+            if ser_obj.is_valid():
+                price_obj = models.PricePolicy.objects.create(course_generic_fk=course_obj, **ser_obj.validated_data)
+                result['data'] = self.serializer_class(price_obj).data
+            else:
+                result['code'] = 10001
+                result['error'] = ser_obj.errors
+        except ObjectDoesNotExist:
+            result["error"] = "课程不存在！"
+            result['code'] = 10002
+
+        return Response(result)

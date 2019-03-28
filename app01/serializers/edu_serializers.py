@@ -17,10 +17,16 @@ class TeacherModelSerializer(serializers.ModelSerializer):
 
 # 课程序列化
 class CourseModelSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = models.Courses
         fields = '__all__'
+
+
+# 价格策略序列化类
+class PricePolicyModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.PricePolicy
+        fields = ['id', 'during', 'price']
 
 
 if __name__ == '__main__':

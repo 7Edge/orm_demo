@@ -13,6 +13,9 @@ class Teachers(models.Model):
     class Meta:
         verbose_name_plural = '001. 老师表'
 
+    def __str__(self):
+        return self.name
+
 
 # 课程分类
 class Category(models.Model):
@@ -20,6 +23,9 @@ class Category(models.Model):
 
     class Meta:
         verbose_name_plural = '002. 课程分类'
+
+    def __str__(self):
+        return self.title
 
 
 # 专题课
@@ -41,6 +47,9 @@ class Courses(models.Model):
     class Meta:
         verbose_name_plural = '003. 专题课'
 
+    def __str__(self):
+        return self.title
+
 
 # 学位课
 class DegreeCourses(models.Model):
@@ -59,6 +68,9 @@ class DegreeCourses(models.Model):
 
     class Meta:
         verbose_name_plural = '004. 学位课'
+
+    def __str__(self):
+        return self.title
 
 
 # 价格策略表
@@ -84,3 +96,6 @@ class PricePolicy(models.Model):
     class Meta:
         unique_together = ('object_id', 'content_type', 'price')
         verbose_name_plural = '005. 课程价格策略表'
+
+    def __str__(self):
+        return self.course_generic_fk.title + '-' + self.get_during_display() + str(self.price)
